@@ -150,12 +150,18 @@ class EditableController extends Controller
   insert: (content, $li) ->
     @$inputor.focus() unless @$inputor.is ':focus'
     suffix = if (suffix = @getOpt 'suffix') == "" then suffix else suffix or "\u00A0"
-    data = $li.data('item-data')
+
+    if $li.data('item-data')
+      data = $li.data('item-data')
+      at_type = data['atwho-at'] + this.query.text
+    else
+      at_type = content
+
     @query.el
       .removeClass 'atwho-query'
       .addClass 'atwho-inserted'
       .html content
-      .attr 'data-atwho-at-query', "" + data['atwho-at'] + @query.text
+      .attr 'data-atwho-at-query', "" + at_type
     if range = @_getRange()
       range.setEndAfter @query.el[0]
       range.collapse false
