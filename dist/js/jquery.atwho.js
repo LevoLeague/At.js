@@ -819,18 +819,52 @@ EditableController = (function(superClass) {
   };
 
   EditableController.prototype.insert = function(content, $li) {
-    var at_type, data, range, suffix, suffixNode;
+    var data, range, suffix, suffixNode;
     if (!this.$inputor.is(':focus')) {
       this.$inputor.focus();
     }
     suffix = (suffix = this.getOpt('suffix')) === "" ? suffix : suffix || "\u00A0";
-    if ($li.data('item-data')) {
-      data = $li.data('item-data');
-      at_type = data['atwho-at'] + this.query.text;
-    } else {
-      at_type = content;
+    data = $li.data('item-data');
+    this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(content).attr('data-atwho-at-query', "" + data['atwho-at'] + this.query.text);
+    if (range = this._getRange()) {
+      range.setEndAfter(this.query.el[0]);
+      range.collapse(false);
+      range.insertNode(suffixNode = this.app.document.createTextNode("\u200D" + suffix));
+      this._setRange('after', suffixNode, range);
     }
-    this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(content).attr('data-atwho-at-query', "" + at_type);
+    if (!this.$inputor.is(':focus')) {
+      this.$inputor.focus();
+    }
+    this.$inputor.change();
+    return {
+      insertNewTag: function(content, $li) {
+        if (!this.$inputor.is(':focus')) {
+          this.$inputor.focus();
+        }
+        suffix = (suffix = this.getOpt('suffix')) === "" ? suffix : suffix || "\u00A0";
+        data = $li.data('item-data');
+        this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(content).attr('data-atwho-at-query', "" + data['atwho-at'] + this.query.text);
+        if (range = this._getRange()) {
+          range.setEndAfter(this.query.el[0]);
+          range.collapse(false);
+          range.insertNode(suffixNode = this.app.document.createTextNode("\u200D" + suffix));
+          this._setRange('after', suffixNode, range);
+        }
+        if (!this.$inputor.is(':focus')) {
+          this.$inputor.focus();
+        }
+        return this.$inputor.change();
+      }
+    };
+  };
+
+  EditableController.prototype.insertNewTag = function(link_tag, tag) {
+    var range, suffix, suffixNode;
+    if (!this.$inputor.is(':focus')) {
+      this.$inputor.focus();
+    }
+    suffix = (suffix = this.getOpt('suffix')) === "" ? suffix : suffix || "\u00A0";
+    this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(link_tag).attr('data-atwho-at-query', "" + tag);
     if (range = this._getRange()) {
       range.setEndAfter(this.query.el[0]);
       range.collapse(false);
