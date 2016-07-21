@@ -172,7 +172,7 @@ class EditableController extends Controller
   insertNewTag: (link_tag, tag) ->
     @$inputor.focus() unless @$inputor.is ':focus'
     suffix = if (suffix = @getOpt 'suffix') == "" then suffix else suffix or "\u00A0"
-    this.query.el
+    query.el
       .removeClass('atwho-query')
       .addClass('atwho-inserted')
       .html(link_tag)
