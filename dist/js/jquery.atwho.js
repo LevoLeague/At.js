@@ -1,24 +1,3 @@
-/**
- * at.js - 1.5.1
- * Copyright (c) 2016 chord.luo <chord.luo@gmail.com>;
- * Homepage: http://ichord.github.com/At.js
- * License: MIT
- */
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module unless amdModuleId is set
-    define(["jquery"], function (a0) {
-      return (factory(a0));
-    });
-  } else if (typeof exports === 'object') {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory(require("jquery"));
-  } else {
-    factory(jQuery);
-  }
-}(this, function ($) {
 var DEFAULT_CALLBACKS, KEY_CODE;
 
 KEY_CODE = {
@@ -835,27 +814,7 @@ EditableController = (function(superClass) {
     if (!this.$inputor.is(':focus')) {
       this.$inputor.focus();
     }
-    this.$inputor.change();
-    return {
-      insertNewTag: function(content, $li) {
-        if (!this.$inputor.is(':focus')) {
-          this.$inputor.focus();
-        }
-        suffix = (suffix = this.getOpt('suffix')) === "" ? suffix : suffix || "\u00A0";
-        data = $li.data('item-data');
-        this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(content).attr('data-atwho-at-query', "" + data['atwho-at'] + this.query.text);
-        if (range = this._getRange()) {
-          range.setEndAfter(this.query.el[0]);
-          range.collapse(false);
-          range.insertNode(suffixNode = this.app.document.createTextNode("\u200D" + suffix));
-          this._setRange('after', suffixNode, range);
-        }
-        if (!this.$inputor.is(':focus')) {
-          this.$inputor.focus();
-        }
-        return this.$inputor.change();
-      }
-    };
+    return this.$inputor.change();
   };
 
   EditableController.prototype.insertNewTag = function(link_tag, tag) {
@@ -1237,5 +1196,3 @@ $.fn.atwho["default"] = {
 };
 
 $.fn.atwho.debug = false;
-
-}));
