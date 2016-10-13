@@ -47,7 +47,8 @@ DEFAULT_CALLBACKS =
   # @return [String | null] Matched result.
   matcher: (flag, subtext, should_startWithSpace, acceptSpaceBar) ->
     # escape RegExp
-    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+    # flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\|]/g, "\\$&")
     flag = '(?:^|\\s)' + flag if should_startWithSpace
 
     # À
@@ -55,7 +56,8 @@ DEFAULT_CALLBACKS =
     # ÿ
     _y = decodeURI("%C3%BF")
     space = if acceptSpaceBar then "\ " else ""
-    regexp = new RegExp "#{flag}([A-Za-z#{_a}-#{_y}0-9_#{space}\'\.\+\-]*)$|#{flag}([^\\x00-\\xff]*)$",'gi'
+    # regexp = new RegExp(flag + "([A-Za-z" + _a + "-" + _y + "0-9_" + space + "\'\.\+\-]*)$|" + flag + "([^\\x00-\\xff]*)$", 'gi');
+    regexp = new RegExp(flag + "([A-Za-z" + _a + "-" + _y + "0-9_" + space + "\'\.\+\-@!\*%\$\&\^\(\)\{\}\[\\]\|\!\~\]*)$|" + flag + "([^\\x00-\\xff]*)$", 'gi');
     match = regexp.exec subtext
     if match then match[2] || match[1] else null
 

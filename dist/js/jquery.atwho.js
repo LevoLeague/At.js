@@ -844,7 +844,7 @@ EditableController = (function(superClass) {
       this.$inputor.focus();
     }
     suffix = (suffix = this.getOpt('suffix')) === "" ? suffix : suffix || "\u00A0";
-    this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(link_tag).attr('data-atwho-at-query', "" + tag);
+    query.el.removeClass('atwho-query').addClass('atwho-inserted').html(link_tag).attr('data-atwho-at-query', "" + tag);
     if (range = this._getRange()) {
       range.setEndAfter(this.query.el[0]);
       range.collapse(false);
