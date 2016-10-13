@@ -45,14 +45,14 @@ DEFAULT_CALLBACKS = {
   },
   matcher: function(flag, subtext, should_startWithSpace, acceptSpaceBar) {
     var _a, _y, match, regexp, space;
-    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\|]/g, "\\$&");
     if (should_startWithSpace) {
       flag = '(?:^|\\s)' + flag;
     }
     _a = decodeURI("%C3%80");
     _y = decodeURI("%C3%BF");
     space = acceptSpaceBar ? "\ " : "";
-    regexp = new RegExp(flag + "([A-Za-z" + _a + "-" + _y + "0-9_" + space + "\'\.\+\-]*)$|" + flag + "([^\\x00-\\xff]*)$", 'gi');
+    regexp = new RegExp(flag + "([A-Za-z" + _a + "-" + _y + "0-9_" + space + "\'\.\+\-@!\*%\$\&\^\(\)\{\}\[\\]\|\!\~\]*)$|" + flag + "([^\\x00-\\xff]*)$", 'gi');
     match = regexp.exec(subtext);
     if (match) {
       return match[2] || match[1];
