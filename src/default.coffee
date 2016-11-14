@@ -1,6 +1,4 @@
 KEY_CODE =
-  DOWN: 40
-  UP: 38
   ESC: 27
   TAB: 9
   ENTER: 13
@@ -11,7 +9,7 @@ KEY_CODE =
   LEFT: 37
   UP:38
   RIGHT: 39
-  DOWN:40
+  DOWN: 40
   BACKSPACE: 8
   SPACE: 32
 
@@ -47,8 +45,9 @@ DEFAULT_CALLBACKS =
   # @return [String | null] Matched result.
   matcher: (flag, subtext, should_startWithSpace, acceptSpaceBar) ->
     # escape RegExp
-    # flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\|]/g, "\\$&")
+    #flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\|]/g, "\\$&")
+    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+
     flag = '(?:^|\\s)' + flag if should_startWithSpace
 
     # À
@@ -56,8 +55,8 @@ DEFAULT_CALLBACKS =
     # ÿ
     _y = decodeURI("%C3%BF")
     space = if acceptSpaceBar then "\ " else ""
-    # regexp = new RegExp(flag + "([A-Za-z" + _a + "-" + _y + "0-9_" + space + "\'\.\+\-]*)$|" + flag + "([^\\x00-\\xff]*)$", 'gi');
-    regexp = new RegExp(flag + "([A-Za-z" + _a + "-" + _y + "0-9_" + space + "\'\.\+\-@!\*%\$\&\^\(\)\{\}\[\\]\|\!\~\]*)$|" + flag + "([^\\x00-\\xff]*)$", 'gi');
+    #regexp = new RegExp(flag + "([A-Za-z" + _a + "-" + _y + "0-9_" + space + "\'\.\+\-@!\*%\$\&\^\(\)\{\}\[\\]\|\!\~\]*)$|" + flag + "([^\\x00-\\xff]*)$", 'gi');
+    regexp = new RegExp "#{flag}([A-Za-z#{_a}-#{_y}0-9_#{space}\'\.\+\-@!\*%\$\&\^\(\)\{\}\[\\]\|\!\~\]*)$|#{flag}([^\\x00-\\xff]*)$",'gi'
     match = regexp.exec subtext
     if match then match[2] || match[1] else null
 
@@ -128,7 +127,7 @@ DEFAULT_CALLBACKS =
   # @return [String] highlighted string.
   highlighter: (li, query) ->
     return li if not query
-    regexp = new RegExp(">\\s*(\\w*?)(" + query.replace("+","\\+") + ")(\\w*)\\s*<", 'ig')
+    regexp = new RegExp(">\\s*([^\<]*?)(" + query.replace("+","\\+") + ")([^\<]*)\\s*<", 'ig')
     li.replace regexp, (str, $1, $2, $3) -> '> '+$1+'<strong>' + $2 + '</strong>'+$3+' <'
 
   # What to do before inserting item's value into inputor.

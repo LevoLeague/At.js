@@ -1,29 +1,6 @@
-/**
- * at.js - 1.5.1
- * Copyright (c) 2016 chord.luo <chord.luo@gmail.com>;
- * Homepage: http://ichord.github.com/At.js
- * License: MIT
- */
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module unless amdModuleId is set
-    define(["jquery"], function (a0) {
-      return (factory(a0));
-    });
-  } else if (typeof exports === 'object') {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory(require("jquery"));
-  } else {
-    factory(jQuery);
-  }
-}(this, function ($) {
 var DEFAULT_CALLBACKS, KEY_CODE;
 
 KEY_CODE = {
-  DOWN: 40,
-  UP: 38,
   ESC: 27,
   TAB: 9,
   ENTER: 13,
@@ -45,7 +22,7 @@ DEFAULT_CALLBACKS = {
   },
   matcher: function(flag, subtext, should_startWithSpace, acceptSpaceBar) {
     var _a, _y, match, regexp, space;
-    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\|]/g, "\\$&");
+    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     if (should_startWithSpace) {
       flag = '(?:^|\\s)' + flag;
     }
@@ -109,7 +86,7 @@ DEFAULT_CALLBACKS = {
     if (!query) {
       return li;
     }
-    regexp = new RegExp(">\\s*(\\w*?)(" + query.replace("+", "\\+") + ")(\\w*)\\s*<", 'ig');
+    regexp = new RegExp(">\\s*([^\<]*?)(" + query.replace("+", "\\+") + ")([^\<]*)\\s*<", 'ig');
     return li.replace(regexp, function(str, $1, $2, $3) {
       return '> ' + $1 + '<strong>' + $2 + '</strong>' + $3 + ' <';
     });
@@ -662,7 +639,7 @@ EditableController = (function(superClass) {
     if (range == null) {
       range = this._getRange();
     }
-    if (!range) {
+    if (!(range && node)) {
       return;
     }
     node = $(node)[0];
@@ -772,12 +749,14 @@ EditableController = (function(superClass) {
       $query = $('<span/>', this.app.document).attr(this.getOpt("editableAtwhoQueryAttrs")).addClass('atwho-query');
       range.surroundContents($query.get(0));
       lastNode = $query.contents().last().get(0);
-      if (/firefox/i.test(navigator.userAgent)) {
-        range.setStart(lastNode, lastNode.length);
-        range.setEnd(lastNode, lastNode.length);
-        this._clearRange(range);
-      } else {
-        this._setRange('after', lastNode, range);
+      if (lastNode) {
+        if (/firefox/i.test(navigator.userAgent)) {
+          range.setStart(lastNode, lastNode.length);
+          range.setEnd(lastNode, lastNode.length);
+          this._clearRange(range);
+        } else {
+          this._setRange('after', lastNode, range);
+        }
       }
     }
     if (isString && matched.length < this.getOpt('minLen', 0)) {
@@ -809,6 +788,9 @@ EditableController = (function(superClass) {
   EditableController.prototype.rect = function() {
     var $iframe, iframeOffset, rect;
     rect = this.query.el.offset();
+    if (!rect) {
+      return;
+    }
     if (this.app.iframe && !this.app.iframeAsRoot) {
       iframeOffset = ($iframe = $(this.app.iframe)).offset();
       rect.left += iframeOffset.left - this.$inputor.scrollLeft();
@@ -825,11 +807,13 @@ EditableController = (function(superClass) {
     }
     suffix = (suffix = this.getOpt('suffix')) === "" ? suffix : suffix || "\u00A0";
     data = $li.data('item-data');
-    this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(content).attr('data-atwho-at-query', "" + data['atwho-at'] + this.query.text);
+    this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(content).attr('data-atwho-at-query', "" + data['atwho-at'] + this.query.text).attr('contenteditable', "false");
     if (range = this._getRange()) {
-      range.setEndAfter(this.query.el[0]);
+      if (this.query.el.length) {
+        range.setEndAfter(this.query.el[0]);
+      }
       range.collapse(false);
-      range.insertNode(suffixNode = this.app.document.createTextNode("\u200D" + suffix));
+      range.insertNode(suffixNode = this.app.document.createTextNode("" + suffix));
       this._setRange('after', suffixNode, range);
     }
     if (!this.$inputor.is(':focus')) {
@@ -844,11 +828,13 @@ EditableController = (function(superClass) {
       this.$inputor.focus();
     }
     suffix = (suffix = this.getOpt('suffix')) === "" ? suffix : suffix || "\u00A0";
-    query.el.removeClass('atwho-query').addClass('atwho-inserted').html(link_tag).attr('data-atwho-at-query', "" + tag);
+    this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(content).attr('data-atwho-at-query', "" + data['atwho-at'] + this.query.text).attr('contenteditable', "false");
     if (range = this._getRange()) {
-      range.setEndAfter(this.query.el[0]);
+      if (this.query.el.length) {
+        range.setEndAfter(this.query.el[0]);
+      }
       range.collapse(false);
-      range.insertNode(suffixNode = this.app.document.createTextNode("\u200D" + suffix));
+      range.insertNode(suffixNode = this.app.document.createTextNode("" + suffix));
       this._setRange('after', suffixNode, range);
     }
     if (!this.$inputor.is(':focus')) {
@@ -986,7 +972,7 @@ View = (function() {
   };
 
   View.prototype.visible = function() {
-    return this.$el.is(":visible");
+    return $.expr.filters.visible(this.$el[0]);
   };
 
   View.prototype.highlighted = function() {
@@ -1217,5 +1203,3 @@ $.fn.atwho["default"] = {
 };
 
 $.fn.atwho.debug = false;
-
-}));
