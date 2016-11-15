@@ -1,3 +1,24 @@
+/**
+ * at.js - 1.5.1
+ * Copyright (c) 2016 chord.luo <chord.luo@gmail.com>;
+ * Homepage: http://ichord.github.com/At.js
+ * License: MIT
+ */
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module unless amdModuleId is set
+    define(["jquery"], function (a0) {
+      return (factory(a0));
+    });
+  } else if (typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory(require("jquery"));
+  } else {
+    factory(jQuery);
+  }
+}(this, function ($) {
 var DEFAULT_CALLBACKS, KEY_CODE;
 
 KEY_CODE = {
@@ -22,7 +43,7 @@ DEFAULT_CALLBACKS = {
   },
   matcher: function(flag, subtext, should_startWithSpace, acceptSpaceBar) {
     var _a, _y, match, regexp, space;
-    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    flag = flag.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\|]/g, "\\$&");
     if (should_startWithSpace) {
       flag = '(?:^|\\s)' + flag;
     }
@@ -828,7 +849,7 @@ EditableController = (function(superClass) {
       this.$inputor.focus();
     }
     suffix = (suffix = this.getOpt('suffix')) === "" ? suffix : suffix || "\u00A0";
-    this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(content).attr('data-atwho-at-query', "" + data['atwho-at'] + this.query.text).attr('contenteditable', "false");
+    this.query.el.removeClass('atwho-query').addClass('atwho-inserted').html(link_tag).attr('data-atwho-at-query', "" + tag + this.query.text).attr('contenteditable', "false");
     if (range = this._getRange()) {
       if (this.query.el.length) {
         range.setEndAfter(this.query.el[0]);
@@ -1203,3 +1224,5 @@ $.fn.atwho["default"] = {
 };
 
 $.fn.atwho.debug = false;
+
+}));

@@ -20,11 +20,12 @@
       limit: 200,
       callbacks: {
         afterMatchFailed: function(at, el) {
-          // 32 is spacebar
           if (at == '#') {
-            tags.push(el.text().trim().slice(1));
-            this.model.save(tags);
-            this.insert(el.text().trim());
+            var tag = el.text().trim();
+            var tag_path = tag.split('#')[1];
+            var tag_link = "#<a href='/topics/" + tag_path + "' class='content-tag'>" + tag_path + "</a>";
+
+            this.insertNewTag(tag_link, tag);
             return false;
           }
         }

@@ -178,8 +178,8 @@ class EditableController extends Controller
     @query.el
       .removeClass 'atwho-query'
       .addClass 'atwho-inserted'
-      .html content
-      .attr 'data-atwho-at-query', "" + data['atwho-at'] + @query.text
+      .html link_tag
+      .attr 'data-atwho-at-query', "" + tag + @query.text
       .attr 'contenteditable', "false"
     if range = @_getRange()
       if @query.el.length
